@@ -1,24 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+
+    <title>Weather Dashboard</title>
   </head>
   <body>
-    <header>
-      <nav>navigation bar</nav>
-    </header>
-    <main class="container">
-      <div class="search-and-history">
-        <div class="search">
-          <div class="textinput">text area</div>
-          <button class="btn">search</button>
-        </div>
-        <div class="show-history">list show-history</div>
-      </div>
-      <div class="dashboard">to the right</div>
-    </main>
+    <div id="search-container">
+      <input type="text" id="city-input" placeholder="Enter a city name" />
+      <button id="search-button">Search</button>
+    </div>
+    <div id="current-weather">
+      <h2 id="city-name"></h2>
+      <p id="date"></p>
+      <img id="weather-icon" src="" alt="Weather Icon" />
+      <p id="temperature"></p>
+      <p id="humidity"></p>
+      <p id="wind-speed"></p>
+    </div>
+    <div id="forecast">
+      <h2>5-Day Forecast:</h2>
+      <div id="forecast-container"></div>
+    </div>
+    <div id="search-history">
+      <h2>Search History:</h2>
+      <ul id="history-list"></ul>
+    </div>
   </body>
+  <script src="./script.js"></script>
 </html>
