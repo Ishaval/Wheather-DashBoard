@@ -16,6 +16,9 @@ header {
 .container {
   display: inline;
 }
+input {
+  color: black;
+}
 button {
   color: black;
 }
