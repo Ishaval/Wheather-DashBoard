@@ -49,7 +49,7 @@ This project is not under any licensed.
 
 ## Author
 
-- [Your Name](https://github.com/Ishaval)
+- [JULIAN RAMIREZ](https://github.com/Ishaval)
 
 ## Contributing
 
