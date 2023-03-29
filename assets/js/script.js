@@ -1,89 +1,90 @@
-const form = document.querySelector(".top-banner form");
-const input = document.querySelector(".top-banner input");
-const msg = document.querySelector(".top-banner .msg");
-const list = document.querySelector(".ajax-section .cities");
+const apiKey = "347a03dddcfceab3edacbd83b8b25864";
 
-const apiKey = "4d8fb5b93d4af21d66a2948710284366";
+function getCityCoordinates(city) {
+    return fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+            return {
+                lat: data.coord.lat,
+                lon: data.coord.lon
+            };
+        });
+}
 
-form.addEventListener("submit", e => {
-  e.preventDefault();
-  let inputVal = input.value;
+function getWeatherData(coordinates) {
+    return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`)
+        .then(response => response.json());
+}
 
-  const listItems = list.querySelectorAll(".ajax-section .city");
-  const listItemsArray = Array.from(listItems);
+function updateUI(weatherData) {
+    const currentWeather = weatherData.list[0];
+    const forecast = weatherData.list.slice(1, 6);
 
-  // Check if input is already in the list
-  if (listItemsArray.length > 0) {
-    const filteredArray = listItemsArray.filter(el => {
-      let content = "";
-      if (inputVal.includes(",")) {
-        if (inputVal.split(",")[1].length > 2) {
-          inputVal = inputVal.split(",")[0];
-          content = el.querySelector(".city-name span").textContent.toLowerCase();
-        } else {
-          content = el.querySelector(".city-name").dataset.name.toLowerCase();
-        }
-      } else {
-        content = el.querySelector(".city-name span").textContent.toLowerCase();
-      }
-      return content == inputVal.toLowerCase();
-    });
-    if (filteredArray.length > 0) {
-      msg.textContent = `You already know the weather for ${
-        filteredArray[0].querySelector(".city-name span").textContent
-      } ...otherwise be more specific by providing the country code as well 😉`;
-      form.reset();
-      input.focus();
-      return;
+    const currentWeatherHTML = `
+        <h2 >${weatherData.city.name} (${new Date(currentWeather.dt * 1000).toLocaleDateString()})</h2>
+        <img src="http://openweathermap.org/img/wn/${currentWeather.weather[0].icon}.png" alt="${currentWeather.weather[0].description}" class="card-img">
+        <p class="card-text">Temperature: ${currentWeather.main.temp}°C</p>
+        <p class="card-text">Humidity: ${currentWeather.main.humidity}%</p>
+        <p class="card-text">Wind Speed: ${currentWeather.wind.speed} m/s</p>
+    `;
+
+    document.getElementById("current-weather").innerHTML = currentWeatherHTML;
+
+    const forecastHTML = forecast.map(day => `
+        <div class="forecast-day">
+            <h3 class="card-title">${new Date(day.dt * 1000).toLocaleDateString()}</h3>
+            <img src="http://openweathermap.org/img/wn/${day.weather[0].icon}.png" alt="${day.weather[0].description}" class="card-img">
+            <p class="card-text">Temperature: ${day.main.temp}°C</p>
+            <p class="card-text">Wind Speed: ${day.wind.speed} m/s</p>
+            <p class="card-text">Humidity: ${day.main.humidity}%</p>
+        </div>
+    `).join("");
+
+    document.getElementById("forecast").innerHTML = forecastHTML;
+}
+
+function saveSearchHistory(city) {
+    let searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+    if (!searchHistory.includes(city)) {
+        searchHistory.unshift(city);
+        searchHistory = searchHistory.slice(0, 10); // Limit to 10 cities
+        localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
     }
-  }
+    loadSearchHistory();
+}
 
-  // Get inputs from local storage
-  let inputs = [];
-  if (localStorage.getItem("inputs")) {
-    inputs = JSON.parse(localStorage.getItem("inputs"));
-  }
+function loadSearchHistory() {
+    const searchHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+    const searchHistoryHTML = searchHistory.map(city => `<button class="search-history-btn">${city}</button>`).join("");
+    document.getElementById("search-history").innerHTML = searchHistoryHTML;
+}
+ 
+function clearSearchHistory() {
+    localStorage.removeItem("searchHistory");
+    document.getElementById("search-history").innerHTML = "";
+}
 
-  // Add new input to inputs
-  inputs.push(inputVal);
-  localStorage.setItem("inputs", JSON.stringify(inputs));
+document.getElementById("clear-history").addEventListener("click", clearSearchHistory);
 
-  // Display the last five inputs
-  const inputList = document.querySelector(".input-list");
-  let lastFiveInputs = inputs.slice(Math.max(inputs.length - 5, 0));
-  inputList.innerHTML = "";
-  lastFiveInputs.forEach((input) => {
-    let listItem = document.createElement("li");
-    listItem.textContent = input;
-    inputList.appendChild(listItem);
-  });
-
-  // Fetch weather data
-  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${inputVal}&appid=${apiKey}&units=metric`;
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      const { list: fiveDaysData } = data;
-      const forecastList = document.querySelector(".forecast-list");
-      forecastList.innerHTML = "";
-      fiveDaysData.forEach(weatherData => {
-        const { dt, main, weather } = weatherData;
-        const date = new Date(dt * 1000);
-        const icon = `https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/${
-          weather[0]["icon"]
-        }.svg`;
-      
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <div class="date">${date.toLocaleDateString()}</div>
-          <div class="icon">
-            <img src="${icon}" alt="${weather[0]["description"]}">
-          </div>
-          <div class="temp">
-            <span>${Math.round(main.temp)}°C</span>
-          </div>`;
-        forecastList.appendChild(li);
-      });
-  
+document.getElementById("search-button").addEventListener("click", () => {
+    const city = document.getElementById("city-search").value;
+    getCityCoordinates(city).then(coordinates => {
+        getWeatherData(coordinates).then(weatherData => {
+            updateUI(weatherData);
+            saveSearchHistory(city);
+        });
     });
-  })
+});
+
+document.getElementById("search-history").addEventListener("click", (event) => {
+    if (event.target.tagName === "BUTTON") {
+        const city = event.target.textContent;
+        getCityCoordinates(city).then(coordinates => {
+            getWeatherData(coordinates).then(weatherData => {
+                updateUI(weatherData);
+            });
+            });
+            }
+            });
+            
+            loadSearchHistory();
