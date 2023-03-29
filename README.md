@@ -1,20 +1,56 @@
-//WEATHER DASHBOARD
-A Simple app that shows you the next five days weather reports for the city you search for, Also saving the last 5 cities searched and show it as a list.
+# Weather Dashboard
 
-Getting Started
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+A simple weather dashboard to check the current weather and a 5-day forecast for any city. This project uses the OpenWeatherMap API to fetch weather data.
 
-Prerequisites
-You need to download the Assets folder and the 'index.html' file.
+## Features
 
-![alt text] (C:\Users\julia\bootcamp\projects\challenge-6\assets\img)
+- Search for a city to get its current weather and a 5-day forecast
+- Search history to quickly access previously searched cities
+- Clear search history button
+- Responsive design using Bootstrap
 
-//Built With
-Boosttrap - style
-html - structure
-javascript - functionality
-css - style
-OpenWeatherMap API - main use
+## Installation
 
-Authors
-Julian
+1. Clone the repository or download the project files.
+2. Open the `index.html` file in your web browser.
+
+## Usage
+
+1. Enter a city name in the input field.
+2. Click the "Search" button or press Enter.
+3. View the current weather and 5-day forecast for the searched city.
+4. Click on a city in the search history to view its weather information.
+5. Click the "Clear History" button to remove all cities from the search history.
+
+## Project Structure
+
+.
+├── assets
+│   ├── css
+│   │   └── style.css
+│   └── js
+│       └── script.js
+├── index.html
+└── README.md
+
+
+## Dependencies
+
+- [Bootstrap 5.1.3](https://getbootstrap.com/)
+- [jQuery 3.6.0](https://jquery.com/)
+
+## API
+
+- [OpenWeatherMap API](https://openweathermap.org/api)
+
+## License
+
+This project is not under any licensed.
+
+## Author
+
+- [Your Name](https://github.com/Ishaval)
+
+## Contributing
+
+If you'd like to contribute, please fork the repository and create a pull request.
