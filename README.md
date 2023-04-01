@@ -2,7 +2,7 @@
 
 A simple weather dashboard to check the current weather and a 5-day forecast for any city. This project uses the OpenWeatherMap API to fetch weather data.
 
-(./asset/Weather.png)
+![screenshot](./asset/Weather.png)
 
 
 ## Features
